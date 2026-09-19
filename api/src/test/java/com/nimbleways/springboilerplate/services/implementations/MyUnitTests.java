@@ -1,9 +1,9 @@
 package com.nimbleways.springboilerplate.services.implementations;
 
+import com.nimbleways.springboilerplate.application.out.NotificationPort;
+import com.nimbleways.springboilerplate.application.out.ProductRepositoryPort;
 import com.nimbleways.springboilerplate.entities.Product;
-import com.nimbleways.springboilerplate.repositories.ProductRepository;
 import com.nimbleways.springboilerplate.utils.Annotations.UnitTest;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,16 +18,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MyUnitTests {
 
     @Mock
-    private NotificationService notificationService;
+    private NotificationPort notificationPort;
+
     @Mock
-    private ProductRepository productRepository;
-    @InjectMocks 
+    private ProductRepositoryPort productRepository;
+
+    @InjectMocks
     private ProductService productService;
 
     @Test
     public void test() {
         // GIVEN
-        Product product =new Product(null, 15, 0, "NORMAL", "RJ45 Cable", null, null, null);
+        Product product = new Product(
+                null,
+                15,
+                0,
+                "NORMAL",
+                "RJ45 Cable",
+                null,
+                null,
+                null
+        );
 
         Mockito.when(productRepository.save(product)).thenReturn(product);
 
@@ -37,7 +48,14 @@ public class MyUnitTests {
         // THEN
         assertEquals(0, product.getAvailable());
         assertEquals(15, product.getLeadTime());
-        Mockito.verify(productRepository, Mockito.times(1)).save(product);
-        Mockito.verify(notificationService, Mockito.times(1)).sendDelayNotification(product.getLeadTime(), product.getName());
+
+        Mockito.verify(productRepository, Mockito.times(1))
+                .save(product);
+
+        Mockito.verify(notificationPort, Mockito.times(1))
+                .sendDelayNotification(
+                        product.getLeadTime(),
+                        product.getName()
+                );
     }
 }
